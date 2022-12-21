@@ -20,7 +20,7 @@ const writeBlogPosts = (blogPostsArray) =>
   fs.writeFileSync(blogPostsJSONPath, JSON.stringify(blogPostsArray))
 
 blogPostsRouter.post("/", (req, res, next) => {
-  const newPost = { ...req.body, createdAt: new Date(), id: uniqid() }
+  const newPost = { ...req.body, createdAt: new Date(), _id: uniqid() }
   try {
     const blogPostsArray = getBlogPosts()
 
@@ -28,7 +28,7 @@ blogPostsRouter.post("/", (req, res, next) => {
 
     writeBlogPosts(blogPostsArray)
 
-    res.status(201).send({ id: newPost.id })
+    res.status(201).send({ _id: newPost._id })
   } catch (error) {
     next(error)
   }
@@ -53,7 +53,7 @@ blogPostsRouter.get("/", (req, res, next) => {
 blogPostsRouter.get("/:postId", (req, res, next) => {
   try {
     const posts = getBlogPosts()
-    const post = posts.find((post) => post.id === req.params.postId)
+    const post = posts.find((post) => post._id === req.params.postId)
     if (post) {
       res.send(post)
     } else {
@@ -68,7 +68,7 @@ blogPostsRouter.put("/:postId", (req, res, next) => {
   try {
     const posts = getBlogPosts()
 
-    const index = books.findIndex((post) => post.id === req.params.postId)
+    const index = books.findIndex((post) => post._id === req.params.postId)
     if (index !== -1) {
       const oldPost = posts[index]
 
@@ -91,7 +91,7 @@ blogPostsRouter.delete("/:postId", (req, res, next) => {
   try {
     const posts = getBlogPosts()
 
-    const remainingPosts = posts.filter((post) => post.id != req.params.postId)
+    const remainingPosts = posts.filter((post) => post._id != req.params.postId)
 
     if (posts.length !== remainingPosts.length) {
       writeBlogPosts(remainingPosts)
