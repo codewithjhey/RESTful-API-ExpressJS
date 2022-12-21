@@ -21,15 +21,15 @@ const authorsRouter = express.Router()
 // target --> /Users/zenith/Documents/Epicode/d2–restful-api-exjs/RESTful-API-ExpressJS/src/api/authors/authors.json
 
 // 1. We gonna start from the current's file path --> /Users/zenith/Documents/Epicode/d2–restful-api-exjs/RESTful-API-ExpressJS/src/api/authors/index.js
-console.log("CURRENT FILE URL: ", import.meta.url)
-console.log("CURRENT FILE PATH: ", fileURLToPath(import.meta.url))
+// console.log("CURRENT FILE URL: ", import.meta.url)
+// console.log("CURRENT FILE PATH: ", fileURLToPath(import.meta.url))
 // 2. We can obtain the parent's folder path --> /Users/zenith/Documents/Epicode/d2–restful-api-exjs/RESTful-API-ExpressJS/src/api/authors
-console.log("PARENT FOLDER PATH: ", dirname(fileURLToPath(import.meta.url)))
+// console.log("PARENT FOLDER PATH: ", dirname(fileURLToPath(import.meta.url)))
 // 3. We can concatenate parent's folder path with "authors.json"
-console.log(
-  "TARGET: ",
-  join(dirname(fileURLToPath(import.meta.url)), "authors.json")
-)
+// console.log(
+//   "TARGET: ",
+//   join(dirname(fileURLToPath(import.meta.url)), "authors.json")
+// )
 
 const authorsJSONPath = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -40,7 +40,7 @@ const authorsJSONPath = join(
 // 1. POST http://localhost:3001/authors/ (+body)
 authorsRouter.post("/", (req, res) => {
   // 1. Read the request body
-  console.log("REQ BODY:", req.body) // remember to add express.json() into server.js configuration!!!
+  // console.log("REQ BODY:", req.body) // remember to add express.json() into server.js configuration!!!
 
   // 2. Add some server generated informations (unique id, createdAt, ..)
   const newAuthor = {
@@ -68,7 +68,7 @@ authorsRouter.post("/", (req, res) => {
 authorsRouter.get("/", (req, res) => {
   // 1. Read the content of authors.json file, obtaining an array
   const fileContentAsABuffer = fs.readFileSync(authorsJSONPath) // Here you obtain a BUFFER object, which is a MACHINE READABLE FORMAT
-  console.log("file content: ", fileContentAsABuffer)
+  // console.log("file content: ", fileContentAsABuffer)
   const authorsArray = JSON.parse(fileContentAsABuffer)
   console.log("file content: ", authorsArray)
   // 2. Send it back as a response
@@ -79,7 +79,7 @@ authorsRouter.get("/", (req, res) => {
 authorsRouter.get("/:authorId", (req, res) => {
   // 1. Obtain the userId from the URL
   const authorId = req.params.authorId
-  console.log("AUTHOR ID: ", authorId)
+  // console.log("AUTHOR ID: ", authorId)
 
   // 2. Read the file --> obtaining an array
   const authorsArray = JSON.parse(fs.readFileSync(authorsJSONPath))
