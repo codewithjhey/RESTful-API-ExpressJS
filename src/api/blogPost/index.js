@@ -4,6 +4,7 @@ import { dirname, join } from "path"
 import uniqid from "uniqid"
 import fs from "fs"
 import httpErrors from "http-errors"
+import { checksPostSchema, triggerBadRequest } from "./validator.js"
 
 const { NotFound } = httpErrors
 
@@ -19,20 +20,25 @@ const getBlogPosts = () => JSON.parse(fs.readFileSync(blogPostsJSONPath))
 const writeBlogPosts = (blogPostsArray) =>
   fs.writeFileSync(blogPostsJSONPath, JSON.stringify(blogPostsArray))
 
-blogPostsRouter.post("/", (req, res, next) => {
-  const newPost = { ...req.body, createdAt: new Date(), _id: uniqid() }
-  try {
-    const blogPostsArray = getBlogPosts()
+blogPostsRouter.post(
+  "/",
+  checksPostSchema,
+  triggerBadRequest,
+  (req, res, next) => {
+    const newPost = { ...req.body, createdAt: new Date(), _id: uniqid() }
+    try {
+      const blogPostsArray = getBlogPosts()
 
-    blogPostsArray.push(newPost)
+      blogPostsArray.push(newPost)
 
-    writeBlogPosts(blogPostsArray)
+      writeBlogPosts(blogPostsArray)
 
-    res.status(201).send({ _id: newPost._id })
-  } catch (error) {
-    next(error)
+      res.status(201).send({ _id: newPost._id })
+    } catch (error) {
+      next(error)
+    }
   }
-})
+)
 
 blogPostsRouter.get("/", (req, res, next) => {
   try {
