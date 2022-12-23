@@ -1,37 +1,26 @@
 import express from "express"
-import { fileURLToPath } from "url"
-import { dirname, join } from "path"
 import uniqid from "uniqid"
-import fs from "fs"
 import httpErrors from "http-errors"
 import { checksPostSchema, triggerBadRequest } from "./validator.js"
+import { getBlogPosts, writeBlogPosts } from "../../lib/fs-tools.js"
 
 const { NotFound } = httpErrors
 
 const blogPostsRouter = express.Router()
 
-const blogPostsJSONPath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "blogPosts.json"
-)
-
-const getBlogPosts = () => JSON.parse(fs.readFileSync(blogPostsJSONPath))
-
-const writeBlogPosts = (blogPostsArray) =>
-  fs.writeFileSync(blogPostsJSONPath, JSON.stringify(blogPostsArray))
-
 blogPostsRouter.post(
   "/",
   checksPostSchema,
   triggerBadRequest,
-  (req, res, next) => {
+
+  async (req, res, next) => {
     const newPost = { ...req.body, createdAt: new Date(), _id: uniqid() }
     try {
-      const blogPostsArray = getBlogPosts()
+      const blogPostsArray = await getBlogPosts()
 
       blogPostsArray.push(newPost)
 
-      writeBlogPosts(blogPostsArray)
+      await writeBlogPosts(blogPostsArray)
 
       res.status(201).send({ _id: newPost._id })
     } catch (error) {
@@ -40,9 +29,9 @@ blogPostsRouter.post(
   }
 )
 
-blogPostsRouter.get("/", (req, res, next) => {
+blogPostsRouter.get("/", async (req, res, next) => {
   try {
-    const blogPostsArray = getBlogPosts()
+    const blogPostsArray = await getBlogPosts()
     if (req.query && req.query.category) {
       const filteredPosts = blogPostsArray.filter(
         (post) => post.category === req.query.category
@@ -56,9 +45,9 @@ blogPostsRouter.get("/", (req, res, next) => {
   }
 })
 
-blogPostsRouter.get("/:postId", (req, res, next) => {
+blogPostsRouter.get("/:postId", async (req, res, next) => {
   try {
-    const posts = getBlogPosts()
+    const posts = await getBlogPosts()
     const post = posts.find((post) => post._id === req.params.postId)
     if (post) {
       res.send(post)
@@ -70,9 +59,9 @@ blogPostsRouter.get("/:postId", (req, res, next) => {
   }
 })
 
-blogPostsRouter.put("/:postId", (req, res, next) => {
+blogPostsRouter.put("/:postId", async (req, res, next) => {
   try {
-    const posts = getBlogPosts()
+    const posts = await getBlogPosts()
 
     const index = books.findIndex((post) => post._id === req.params.postId)
     if (index !== -1) {
@@ -82,7 +71,7 @@ blogPostsRouter.put("/:postId", (req, res, next) => {
 
       posts[index] = updatedPost
 
-      writeBlogPosts(posts)
+      await writeBlogPosts(posts)
 
       res.send(updatedPost)
     } else {
@@ -93,9 +82,9 @@ blogPostsRouter.put("/:postId", (req, res, next) => {
   }
 })
 
-blogPostsRouter.delete("/:postId", (req, res, next) => {
+blogPostsRouter.delete("/:postId", async (req, res, next) => {
   try {
-    const posts = getBlogPosts()
+    const posts = await getBlogPosts()
 
     const remainingPosts = posts.filter((post) => post._id != req.params.postId)
 
