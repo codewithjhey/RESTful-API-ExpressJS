@@ -1,5 +1,6 @@
 import express from "express"
 import cors from "cors"
+import createHttpError from "http-errors"
 import listEndpoints from "express-list-endpoints"
 import authorsRouter from "./api/authors/index.js"
 import blogPostsRouter from "./api/blogPost/index.js"
@@ -15,12 +16,29 @@ import {
 
 const server = express()
 
-const port = 3001
+const port = process.env.PORT
 
 const publicFolderPath = join(process.cwd(), "./public")
 
+const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL]
+
+const corsOpts = {
+  origin: (origin, corsNext) => {
+    console.log("CURRENT ORIGIN: ", origin)
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      // If current origin is in the whitelist you can move on
+      corsNext(null, true)
+    } else {
+      // If it is not --> error
+      corsNext(
+        createHttpError(400, `Origin ${origin} is not in the whitelist!`)
+      )
+    }
+  }
+}
+
 server.use(express.static(publicFolderPath))
-server.use(cors())
+server.use(cors(corsOpts))
 
 server.use(express.json())
 

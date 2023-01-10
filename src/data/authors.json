@@ -1,1 +1,12 @@
-[{},{"name":"Andy","surname":"Tuore","date_of_birth":"21-11-1987","email":"andytuore@live.com","avatar":"https://ui-avatars.com/api/?name=Andy+Tuore","createdAt":"2022-12-20T15:49:43.911Z","updatedAt":"2022-12-20T15:49:43.911Z","id":"93q9l1mxdlbwejaeg"}]
+[
+  {
+    "name": "Andy",
+    "surname": "Tuore",
+    "date_of_birth": "21-11-1987",
+    "email": "andytuore@live.com",
+    "avatar": "https://ui-avatars.com/api/?name=Andy+Tuore",
+    "createdAt": "2022-12-20T15:49:43.911Z",
+    "updatedAt": "2022-12-20T15:49:43.911Z",
+    "id": "93q9l1mxdlbwejaeg"
+  }
+]
